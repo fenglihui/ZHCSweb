@@ -4,9 +4,26 @@
 }
 #all{
     width: 100%;
-    height: 100%;
     min-width: 1280px;
+    height: 100%;
+    min-height: 830px;
     position: relative;
+    overflow: hidden;
+}
+#register{
+    position: absolute;
+    top: 3%;
+    left:50%;
+    margin-left: -489px;
+    width: 978px;
+}
+#register p{
+    padding: 0 10px;
+    float: right;
+}
+#register img{
+    margin-top: 20px;
+    float: right;
 }
 nav{
     position: absolute;
@@ -62,6 +79,7 @@ ul{
 #background-image{
     width: 100%;
     height: 100%;
+    vertical-align: middle;
 }
 #input{
     position: absolute;
@@ -198,4 +216,29 @@ a{
 .position{
     position: absolute;
 }
-
+footer{
+    position: absolute;
+    top:88%;
+    left:50%;
+    margin-left: -489px;
+    z-index: 1;
+    width: 978px;
+}
+.font-style{
+    position: relative;
+    margin-top: 7px;
+    font-size: 12px;
+    font-family: "Arial";
+    color: rgba(255, 255, 255, 0.502);
+    z-index: 11;
+    padding: 0 8px;
+}
+.font-style a{
+    text-decoration: none;
+}
+.font-float-left{
+    float: left;
+}
+.font-float-right{
+    float: right;
+}
