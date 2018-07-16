@@ -1,0 +1,314 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="initial-scale=1.0, user-scalable=no, width=device-width">
+    <link rel="stylesheet" type="text/css" href="css/ZHCSchart.css">
+    <script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script type="text/javascript" src="http://cache.amap.com/lbs/static/addToolbar.js"></script>
+    <script src="//webapi.amap.com/ui/1.0/main.js"></script>
+    <script type="text/javascript" src="js/echarts.js"></script>
+    <script type="text/javascript" src="js/select.js"></script>
+    <script type="text/javascript" src="js/Theme.js"></script>
+    <title>智慧菜市数据展示</title>
+</head>
+<body>
+<div id="title">
+    智慧菜市云平台数据展示
+</div>
+<div id="chart">
+        <form method="get" action="formsubmit.php" id="chartsform">
+            <select name="year" id="year">
+                <option value="2018" selected="selected">2018年</option>
+            </select>
+            <select name="month" id="month" onchange="submitForm()">
+                <option value="01" selected="selected">01月</option>
+            </select>
+            <select name="manage" id="manage">
+                <option value="0" selected="selected">基地菜</option>
+            </select>
+            <select name="name" id="name" class="select">
+                <option value="玉米" selected="selected">玉米</option>
+            </select>
+            <select name="location" id="location" class="select">
+                <option value="攀枝花" selected="selected">攀枝花</option>
+            </select>
+            <select name="channels" id="channels" class="select">
+                <option value="百仁" selected="selected">百仁</option>
+            </select>
+        </form>
+</div>
+<div id="map-excel-charts">
+    <div id="left-map">
+        <div id="map-introduce">
+            <ul id="myList">
+
+            </ul>
+        </div>
+        <div id="map">
+
+        </div>
+        <div class="clear"></div>
+    </div>
+    <div id="right-top-excel">
+
+    </div>
+    <div id="right-bottom-charts">
+
+    </div>
+</div>
+<script type="text/javascript">
+    window.onload = $.ajax({
+        type:"GET",
+        url:"js/name.json",
+        dataType:"json",
+        success:function (data) {
+            var nameSel = document.getElementById("name");
+            var locationSel = document.getElementById("location");
+            var channelsSel = document.getElementById("channels");
+            console.log("data",data);//看类型
+            $.each(data.name,function (i,n) {
+                var nameOpt = document.createElement("option");
+                nameOpt.value = n.name;
+                nameOpt.innerHTML = n.name;
+                nameSel.appendChild(nameOpt);
+            });
+            $.each(data.location,function (i,n) {
+                var nameOpt = document.createElement("option");
+                nameOpt.value = n.location;
+                nameOpt.innerHTML = n.location;
+                locationSel.appendChild(nameOpt);
+            });
+            $.each(data.channels,function (i,n) {
+                var nameOpt = document.createElement("option");
+                nameOpt.value = n.channels;
+                nameOpt.innerHTML = n.channels;
+                channelsSel.appendChild(nameOpt);
+            });
+        }
+    });
+</script>
+<script type="text/javascript" src="https://webapi.amap.com/maps?v=1.4.6&key=0f725c13d51ff337bba15656045c80b4"></script>
+<script src="//webapi.amap.com/ui/1.0/main.js?v=1.0.11"></script>
+<script type="text/javascript">
+    var map = new AMap.Map('map',{zoom:9});
+    //加载MarkerList，loadUI的路径参数为模块名中 'ui/' 之后的部分
+    AMapUI.loadUI(['misc/MarkerList'], function(MarkerList) {
+        //启动页面
+        initPage(MarkerList);
+    });
+
+    function initPage(MarkerList) {
+        //创建一个实例
+        var markerList = new MarkerList({
+            map: map, //关联的map对象
+            listContainer: 'myList', //列表的dom容器的节点或者id, 用于放置getListElement返回的内容
+            getDataId: function(dataItem, index) {
+                //返回数据项的Id
+                return dataItem.id;
+            },
+            getPosition: function(dataItem) {
+                //返回数据项的经纬度，AMap.LngLat实例或者经纬度数组
+                return dataItem.position;
+            },
+            getMarker: function(dataItem, context, recycledMarker) {
+                var content = '标注: ' + (context.index + 1) + '',
+                    label = {
+                        offset: new AMap.Pixel(16, 18),
+                        content: content
+                    };
+
+                if (recycledMarker) {
+                    //存在可回收利用的marker,直接setLabel返回
+                    recycledMarker.setLabel(label);
+                    return recycledMarker;
+                }
+                //返回一个新的Marker
+                return new AMap.Marker({
+                    label: label
+                });
+            },
+            getInfoWindow: function(dataItem, context, recycledInfoWindow) {
+                var tpl = '<p><%- dataItem.id %>：<%- dataItem.desc %><p>';
+                //MarkerList.utils.template支持underscore语法的模板
+                var content = MarkerList.utils.template(tpl, {
+                    dataItem: dataItem,
+                    dataIndex: context.index
+                });
+                if (recycledInfoWindow) {
+                    //存在可回收利用的infoWindow, 直接setContent返回
+                    recycledInfoWindow.setContent(content);
+                    return recycledInfoWindow;
+                }
+                //返回一个新的InfoWindow
+                return new AMap.InfoWindow({
+                    offset: new AMap.Pixel(0, -23),
+                    content: content
+                });
+            },
+            getListElement: function(dataItem, context, recycledListElement) {
+                var tpl = '<p><%- dataItem.id %>：<%- dataItem.desc %><p>';
+                var content = MarkerList.utils.template(tpl, {
+                    dataItem: dataItem,
+                    dataIndex: context.index
+                });
+                if (recycledListElement) {
+                    //存在可回收利用的listElement, 直接更新内容返回
+                    recycledListElement.innerHTML = content;
+                    return recycledListElement;
+                }
+                //返回一段html，MarkerList将利用此html构建一个新的dom节点
+                return '<li>' + content + '</li>';
+            }
+        });
+
+        //监听选中改变
+        markerList.on('selectedChanged', function(event, info) {});
+
+        //监听Marker和ListElement上的点击，详见markerEvents，listElementEvents
+        markerList.on('markerClick listElementClick', function(event, record) {});
+
+        //构建数据源，数据项本身没有格式要求，但需要支持getDataId和getPosition
+        var data = [{
+            id: 'A',
+            position: [116.020764, 39.904989],
+            desc: '数据_1'
+        }, {
+            id: 'B',
+            position: [116.405285, 39.904989],
+            desc: '数据_2'
+        }, {
+            id: 'C',
+            position: [116.789806, 39.904989],
+            desc: '数据_3'
+        }];
+
+        //绘制数据源，Let's go!
+        markerList.render(data);
+
+        //清除数据
+        //markerList.render([]);
+    }
+</script>
+<script type="text/javascript">
+    var leftChart = echarts.init(document.getElementById('right-top-excel'),'macarons');
+    leftChart.setOption({
+        title: {
+            text: '数据图形化'
+        },
+        tooltip: {},
+        legend: {
+        },
+        dataset: {
+            // 这里指定了维度名的顺序，从而可以利用默认的维度到坐标轴的映射。
+            // 如果不指定 dimensions，也可以通过指定 series.encode 完成映射，参见后文。
+            dimensions: [],
+            source: [{}]
+        },
+        xAxis: {
+            type: 'category'
+        },
+        yAxis: {},
+        series: []
+    });
+    leftChart.showLoading();
+    $.get('js/test.json').done(function (data) {
+        console.dir(data);
+        console.log("data",data);//看类型
+        console.log("data.categories:",data.categories);//观察类型
+        console.log("data.data:",data.data);
+        console.log(typeof(data));
+        leftChart.hideLoading();
+        leftChart.setOption({
+            dataset: {
+                // 这里指定了维度名的顺序，从而可以利用默认的维度到坐标轴的映射。
+                // 如果不指定 dimensions，也可以通过指定 series.encode 完成映射，参见后文。
+                dimensions:data.dimension,
+                source: data.source
+            },
+            series:data.series
+        });
+    });
+</script>
+<script type="text/javascript">
+    var rightChart = echarts.init(document.getElementById('right-bottom-charts'),'macarons');
+    rightChart.setOption({
+        title : {
+            text: '各用户合格率',
+            x:'center'
+        },
+        tooltip : {
+            trigger: 'item',
+            formatter: "{a} <br/>{b} : {c} ({d}%)"
+        },
+        legend: {
+            orient: 'vertical',
+            left: 'left',
+            data: []
+        },
+        series : [
+            {
+                name: '合格次数',
+                type: 'pie',
+                radius : '55%',
+                center: ['50%', '50%'],
+                data:[{}],
+                itemStyle: {
+                    emphasis: {
+                        shadowBlur: 10,
+                        shadowOffsetX: 0,
+                        shadowColor: 'rgba(0, 0, 0, 0.5)'
+                    }
+                }
+            }
+        ]
+    });
+    rightChart.showLoading();
+    $.get('js/pietest.json').done(function (data) {
+        console.dir(data);
+        console.log("data",data);//看类型
+        console.log("data.title:",data.title);//观察类型
+        console.log("data.text:",data.text);
+        console.log(typeof(data));
+        rightChart.hideLoading();
+        rightChart.setOption({
+            legend: {
+                data:data.title
+            },
+            series:[{
+                data:data.text
+            }]
+        });
+    });
+</script>
+<script type="text/javascript">
+    $(function(){
+        $("#date").selectDate()
+
+        $("#days").focusout(function(){
+            var year = $("#year option:selected").html()
+            var month = $("#month option:selected").html()
+            console.log(year+month)
+        })
+
+    })
+</script>
+<script type="text/javascript">
+    function submitForm() {
+        $.ajax({
+            type:"GET",
+            url:"formsubmit.php",
+            async:true,
+            data:{
+                "year":$("#year").val(),
+                "month":$("#month").val(),
+                "days":$("#days").val()
+            },
+            success:function (data) {
+                console.log("data.content:",data)
+            }
+        });
+    }
+</script>
+</body>
+</html>
