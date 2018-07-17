@@ -58,7 +58,20 @@ select{
     margin-right: 30px;
 }
 #map{
+    position: relative;
     float: right;
     width: 700px;
     height: 100%;
+}
+#myList{
+    list-style: none;
+}
+#myList li{
+    cursor: pointer;
+}
+#food-market{
+    position: absolute;
+    top: 0;
+    right: 0;
+    z-index: 99;
 }
