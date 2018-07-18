@@ -104,6 +104,16 @@
         //启动页面
         initPage(MarkerList);
     });
+    AMap.plugin(['AMap.ToolBar','AMap.Scale','AMap.OverView','AMap.Geolocation'],function(){//异步加载插件
+        map.addControl(new AMap.ToolBar());
+        map.addControl(new AMap.Scale());
+        map.addControl(new AMap.OverView({isOpen:true}));
+        var Geolocation = new AMap.Geolocation({
+            buttonPosition:'LB',
+            buttonOffset: new AMap.Pixel(10, 50)
+        });
+        map.addControl(Geolocation);
+    });
 
     function initPage(MarkerList) {
         //创建一个实例
@@ -165,7 +175,7 @@
                     return recycledListElement;
                 }
                 //返回一段html，MarkerList将利用此html构建一个新的dom节点
-                return '<li>' + content + '</li>';
+                return '<li class="li-hover">' + content + '</li>';
             }
         });
 
