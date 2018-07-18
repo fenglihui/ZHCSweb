@@ -26,7 +26,7 @@ $.fn.selectDate = function(){
 			}
 			for(var m =minManage;m<=maxManage;m++){
 				var manageOpt = document.createElement('option');
-				manageOpt.value = m;
+				manageOpt.value ='蔬菜' + m + '号';
 				manageOpt.innerHTML = '蔬菜' + m + '号'
 				manageSel.appendChild(manageOpt);
 			}

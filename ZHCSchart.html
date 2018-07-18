@@ -18,22 +18,22 @@
 </div>
 <div id="chart">
         <form method="get" action="formsubmit.php" id="chartsform">
-            <select name="year" id="year">
+            <select name="year" id="year" onchange="submitForm()">
                 <option value="2018" selected="selected">2018年</option>
             </select>
             <select name="month" id="month" onchange="submitForm()">
                 <option value="01" selected="selected">01月</option>
             </select>
-            <select name="manage" id="manage">
-                <option value="0" selected="selected">基地菜</option>
+            <select name="manage" id="manage" onchange="submitForm()">
+                <option value="基地菜" selected="selected">基地菜</option>
             </select>
-            <select name="name" id="name" class="select">
+            <select name="name" id="name" class="select" onchange="submitForm()">
                 <option value="玉米" selected="selected">玉米</option>
             </select>
-            <select name="location" id="location" class="select">
+            <select name="location" id="location" class="select" onchange="submitForm()">
                 <option value="攀枝花" selected="selected">攀枝花</option>
             </select>
-            <select name="channels" id="channels" class="select">
+            <select name="channels" id="channels" class="select" onchange="submitForm()">
                 <option value="百仁" selected="selected">百仁</option>
             </select>
         </form>
@@ -174,15 +174,8 @@
 
         //监听Marker和ListElement上的点击，详见markerEvents，listElementEvents
         markerList.on('markerClick listElementClick', function(event, record) {
-            $.ajax({
-                type:"GET",
-                url:"formsubmit.php",
-                data:{"total":record.data.desc},
-                success:function (data) {
-                    console.log("market-name:",data);
-                }
-            });
-            console.log(record.data.desc);
+            Market = record.data.desc;
+            submitForm();
         });
         //利用ajax初始化数据
         $.ajax({
@@ -321,18 +314,54 @@
     })
 </script>
 <script type="text/javascript">
-    function submitForm() {
+    var Market = "益民菜市(长顺街店)";
+    var Year = $("#year option:selected").val();
+    var Month = $("#month option:selected").val();
+    var Manage = $("#manage option:selected").val();
+    var Name = $("#name option:selected").val();
+    var Location = $("#location option:selected").val();
+    var Channels = $("#channels option:selected").val();
+    window.onload = function () {
         $.ajax({
             type:"GET",
             url:"formsubmit.php",
             async:true,
             data:{
-                "year":$("#year").val(),
-                "month":$("#month").val(),
-                "days":$("#days").val()
+                "market":Market,
+                "year":Year,
+                "month":Month,
+                "manage":Manage,
+                "name":Name,
+                "location":Location,
+                "channels":Channels
             },
             success:function (data) {
-                console.log("data.content:",data)
+                console.log("window.onload.data:",data)
+            }
+        });
+    }
+    function submitForm() {
+        Year = $("#year option:selected").val();
+        Month = $("#month option:selected").val();
+        Manage = $("#manage option:selected").val();
+        Name = $("#name option:selected").val();
+        Location = $("#location option:selected").val();
+        Channels = $("#channels option:selected").val();
+        $.ajax({
+            type:"GET",
+            url:"formsubmit.php",
+            async:true,
+            data:{
+                "market":Market,
+                "year":Year,
+                "month":Month,
+                "manage":Manage,
+                "name":Name,
+                "location":Location,
+                "channels":Channels
+            },
+            success:function (data) {
+                console.log("change.data.content:",data);
             }
         });
     }
