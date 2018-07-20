@@ -116,3 +116,6 @@ select{
 #excel-data th{
     padding: 10px 15px;
 }
+#excel-data td{
+    text-align: center;
+}

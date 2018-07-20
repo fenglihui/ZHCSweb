@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html style="height: 100%">
+<head>
+    <meta charset="utf-8">
+</head>
+<body style="height: 100%; margin: 0">
+<div id="container" style="height: 100%"></div>
+<script src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/echarts.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-gl/echarts-gl.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts-stat/ecStat.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/dataTool.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/china.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/map/js/world.js"></script>
+<script type="text/javascript" src="http://api.map.baidu.com/api?v=2.0&ak=ZUONbpqGBsYGXNIYHicvbAbM"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/echarts/extension/bmap.min.js"></script>
+<script type="text/javascript" src="http://echarts.baidu.com/gallery/vendors/simplex.js"></script>
+<script type="text/javascript">
+    var dom = document.getElementById("container");
+    var myChart = echarts.init(dom);
+    var app = {};
+    option = null;
+    app.title = '多 Y 轴示例';
+
+    var colors = ['#47558a', '#27da03'];
+
+    option = {
+        color: colors,
+
+        tooltip: {
+            trigger: 'axis',
+            axisPointer: {
+                type: 'cross'
+            }
+        },
+        grid: {
+            right: '20%'
+        },
+        toolbox: {
+            feature: {
+                dataView: {show: true, readOnly: false},//数据视图工具，可以展现当前图表所用的数据，编辑后可以动态更新。
+                restore: {show: true},//配置项还原。
+                saveAsImage: {show: true}, //保存为图片。
+                magicType: {
+                    type:['bar'],
+                    show:true
+                }
+            }
+        },
+        legend: {
+            data:['快检数据量','合格率']
+        },
+        xAxis: [
+            {
+                type: 'category',
+                axisTick: {
+                    alignWithLabel: true
+                },
+                data: ['1月','2月','3月','4月','5月','6月','7月','8月','9月','10月','11月','12月']
+            }
+        ],
+        yAxis: [
+            {
+                type: 'value',
+                name: '快检数据量',
+                min: 0,
+                max: 10000,
+                position: 'left',
+                axisLine: {
+                    lineStyle: {
+                        color: colors[0]
+                    }
+                },
+                axisLabel: {
+                    formatter: '{value} 次'
+                }
+            },
+            {
+                type: 'value',
+                name: '合格率',
+                min: 0,
+                max: 100,
+                position: 'right',
+                axisLine: {
+                    lineStyle: {
+                        color: colors[1]
+                    }
+                },
+                axisLabel: {
+                    formatter: '{value} %'
+                }
+            }],
+        series: []
+    };
+    myChart.setOption(option, true);
+    myChart.showLoading();
+    $.ajax({
+        type:"GET",
+        url:"js/doublechart.json",
+        success:function (data) {
+            myChart.hideLoading();
+            myChart.setOption({
+                series:data
+            });
+        }
+    });
+</script>
+</body>
+</html>
