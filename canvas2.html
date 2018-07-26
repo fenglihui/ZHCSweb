@@ -1,0 +1,58 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <script type="text/javascript" src="https://code.jquery.com/jquery-3.1.1.min.js"></script>
+    <script src="js/radialIndicator.js"></script>
+    <title>圆形指示器模块</title>
+    <style type="text/css">
+        #indicatorContainer{
+            width: 200px;
+            height: 200px;
+        }
+        #indicatorContainer canvas{
+           cursor: pointer;
+       }
+    </style>
+</head>
+<body>
+<div id="indicatorContainer"></div>
+<script type="text/javascript">
+    $('#indicatorContainer').radialIndicator({
+        barColor:  {
+            0: '#FF0000',
+            33: '#ff8308',
+            66: '#f9ea00',
+            100: '#33CC33'
+        },
+        radius:90,
+        barWidth: 10,
+        initValue: 0,
+        roundCorner : true,
+        percentage: true
+    });
+    var radialObj = $('#indicatorContainer').data('radialIndicator');
+    //now you can use instance to call different method on the radial progress.
+    //like
+</script>
+<script>
+    function action(data){
+        radialObj.animate(data);
+    }
+    window.onload = $.ajax({
+        type:"GET",
+        url:"data.php",
+        success:function (data) {
+            setTimeout(function(){action(data)},1000);
+        }
+    });
+</script>
+<script type="text/javascript">
+    $(document).ready(function () {
+        $("#indicatorContainer canvas").click(function() {
+            location.href = 'http://www.baidu.com';
+        });
+    })
+</script>
+</body>
+</html>

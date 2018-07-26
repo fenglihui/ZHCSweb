@@ -329,8 +329,9 @@
         //页面初始化渲染时利用ajax异步加载表格数据
         $.ajax({
             type:"GET",
-            url:"js/excel.json",
+            url:"Testservlet",
             async:true,
+            dataType:"json",
             success:function (data) {
                 var item;
                 $.each(data,function (i,n) {
